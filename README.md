@@ -15,3 +15,12 @@ Run it via: *sudo node webserver.js* . Both *pigpio* and *halt* require sudo. I 
 Once the code is running, just type the Pi's IP address into the web browser of any device that has access to that IP address! The following should appear...
 
 ![sample image](screenshot.jpg)
+
+The code runs a servo motor that connects to a geared DC motor to control the front wheels. The hardware we used...
+- Raspberry Pi 3B
+- DRV8833 motor driver (Adafruit sells one in a nice breakout board)
+- dual-shaft geared DC motor with a wheel attached on each side. An L bracket was used to connect it to the servo motor.
+- $13 USB speakers from Amazon
+- $5 USB webcam from Amazon
+- Ayeway PD-2620W battery pack. The 26,800 mAh is way more than we need, and we only used the 5 volts, which has a 3 amp maximum. USB cables were used to power things. The cables can be spliced to more convenient wires that are thick and short enough to carry requires current. Grounds between USB cables were connected on a mini breadboard (the same one that had the DRV8833) to create a common ground.
+- 2 rigid (non-swivel) casters with a wheel diameter of 32 mm
