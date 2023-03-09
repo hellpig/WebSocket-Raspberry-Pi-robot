@@ -17,7 +17,8 @@ Once the code is running, just type the Pi's IP address into the web browser of 
 ![sample image](screenshot.jpg)
 
 The code runs a servo motor that connects to a geared DC motor to control the front wheels. As long as you only are controlling a single servo motor and a single DC motor, I expect the code to work just fine, though different DC motor drivers will likely require modifications to the code. The hardware we used...
-- Raspberry Pi 3B, which has two hardware-PWM channels
+- Raspberry Pi 3B, which has two hardware-PWM channels and WiFi
+- access to the router, or, if you only want to control it on a local network, you can use a smartphone's hotspot
 - S05NF STD servo motor. We created a small circuit to change the 3.3V PWM to 5V: [https://electronics.stackexchange.com/questions/359994/amplify-pwm-signal-from-exactly-0-3-3v-to-0-5v/360046#360046](https://electronics.stackexchange.com/questions/359994/amplify-pwm-signal-from-exactly-0-3-3v-to-0-5v/360046#360046)
 - DRV8833 motor driver. Adafruit sells one in a nice breakout board.
 - dual-shaft geared DC motor with a wheel attached on each side. An L bracket was used to connect it to the servo motor.
