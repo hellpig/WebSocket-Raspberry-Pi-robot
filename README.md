@@ -23,5 +23,5 @@ The code runs a servo motor that connects to a geared DC motor to control the fr
 - dual-shaft geared DC motor with a wheel attached on each side. An L bracket was used to connect it to the servo motor.
 - $13 USB speakers from Amazon. Code can easily be changed to use non-USB speakers, but USB speakers are great because they are powered through the USB!
 - $5 USB webcam from Amazon
-- Ayeway PD-2620W battery pack. The 26,800 mAh is way more than we need, and we only used the 5 volts, which has a 3 amp maximum. USB cables were used to power things. The cables can be spliced to more convenient wires that are thick and short enough to carry requires current. Grounds between USB cables were connected on a mini breadboard (the same one that had the DRV8833) to create a common ground.
+- Ayeway PD-2620W battery pack. The 26,800 mAh is way more than we need, and we only used the 5 volts, which has a 3 amp maximum. USB cables were used to power things. The cables can be spliced to more convenient wires that are thick and short enough to carry requires current. Grounds between USB cables were connected on a mini breadboard (the same one that had the DRV8833) to create a common ground. The Raspberry Pi got a dedicated USB cable to power it.
 - 2 rigid (non-swivel) casters with a wheel diameter of 32 mm
