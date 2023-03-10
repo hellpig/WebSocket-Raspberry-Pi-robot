@@ -16,6 +16,10 @@ Once the code is running, just type the Pi's IP address into the web browser of 
 
 ![webpage](screenshot.jpg)
 
+Nice features...
+- When one user moves a slider, the slider moves for all users.
+- The vertical slider automatically goes back to the middle when you are no longer holding it.
+
 The code runs a servo motor that connects to a geared DC motor to control the front wheels. As long as you only are controlling a single servo motor and a single DC motor, I expect the code to work just fine, though different DC motor drivers will likely require modifications to the code. The hardware we used...
 - Raspberry Pi 3B, which has two hardware-PWM channels and WiFi
 - access to the router, or, if you only want to control it on a local network, you can use a smartphone's hotspot
