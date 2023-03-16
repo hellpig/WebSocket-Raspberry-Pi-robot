@@ -122,6 +122,8 @@ io.on('connection', function(socket) {// WebSocket Connection
     console.log("text = " + data);
 
     /* for my USB speakers */
+    // I don't believe code injection is possible with the following code.
+    // We must be careful since this code is being run by superuser.
     exec("/usr/bin/espeak '" + data.replace(/\'/g, '’') + "' -v english-us+f5 --stdout | /usr/bin/aplay -D plughw:1", (error, stdout, stderr) => {});
   });
 
