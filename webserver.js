@@ -131,6 +131,7 @@ io.on('connection', function(socket) {// WebSocket Connection
     console.log("halt text = " + data);
 
     if (data == "halt") {
+      stop(false);
       console.log("Halting. You may unplug the Pi in a minute.");
       exec("/sbin/halt", (error, stdout, stderr) => {});
     }
@@ -151,15 +152,18 @@ io.on('connection', function(socket) {// WebSocket Connection
 });
 
 
-function stop() {  // stops code in a safe way
+function stop(close = true) {  // stops code in a safe way
   pinServoPWM.digitalWrite(0);
   pinMotorPWM.digitalWrite(0);
   pinMotor.digitalWrite(0);
   pinServoPWM.mode(Gpio.INPUT);
   pinMotorPWM.mode(Gpio.INPUT);
   pinMotor.mode(Gpio.INPUT);
-  process.exit();  //exit completely
+  if (close) {
+    console.log(" bye!");
+    process.exit();  //exit completely
+  }
 }
 
-process.on('SIGINT', stop);  //  on ctrl+c
-process.on('SIGTERM', stop); //  "systemctl stop" uses SIGTERM
+process.on('SIGINT', function(){ stop(true); } );  //  on ctrl+c
+process.on('SIGTERM', function(){ stop(true); } ); //  "systemctl stop" uses SIGTERM
