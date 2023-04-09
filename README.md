@@ -47,4 +47,6 @@ I have not tested the code on a Raspberry Pi yet! I should do it within a week.
 
 If you want to control a different servo motor (or control the one I used differently), search for all instances of *pinServo* in all of the JavaScript files. If you want to control a different DC motor (or control the one I used differently), search for all instances of *pinMotor* in all of the JavaScript files.
 
+If you want to create a new command (such as *pause*), add its file in the *commands* folder. In the file, export the *errorCheck*, *run*, and *config* methods. See existing command files for guidance.
+
 ![screenshotScript](screenshotScript.jpg)
