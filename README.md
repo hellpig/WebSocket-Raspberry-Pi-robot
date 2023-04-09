@@ -41,8 +41,10 @@ The code runs a servo motor that connects to a geared DC motor to control the fr
 
 ## Scripting language to control the robot!
 
-CodingKraken, [https://github.com/CodingKraken](https://github.com/CodingKraken), wrote an impressive modular scripting language for controlling a robot (unpublished), which I used to make the *webserverScript* folder! This simple currently-3-command language can be useful if the webcam has a huge delay or if you want to have fun trying to program obstacle courses! The scripting language is simple and its documentation can be interactively used by typing the *help* command. Improper syntax is found before the starting to run the first line of your script. If another user's script is running, the *Running* box will be checked preventing new scripts from being submitted.
+CodingKraken, [https://github.com/CodingKraken](https://github.com/CodingKraken), wrote an impressive modular scripting language for controlling a robot (unpublished), which I used to make the *webserverScript* folder! This simple currently-3-command language can be useful if the webcam has a huge delay or if you want to have fun trying to program obstacle courses! The scripting language is simple and its documentation can be interactively used by typing the *help* command. Improper syntax is found before the starting to run the first line of your script. If another user's script is running, the *Running* box will be checked preventing new scripts from being run.
 
 I have not tested the code on a Raspberry Pi yet! I should do it within a week.
+
+If you want to control a different servo motor (or control the one I used differently), search for all instances of *pinServo* in all of the JavaScript files. If you want to control a different DC motor (or control the one I used differently), search for all instances of *pinMotor* in all of the JavaScript files.
 
 ![screenshotScript](screenshotScript.jpg)
