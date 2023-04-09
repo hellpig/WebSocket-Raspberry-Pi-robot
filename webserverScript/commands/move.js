@@ -72,7 +72,7 @@ module.exports = {
   config: {
     name: "move",
     aliases: ["run", "drive", "go"],
-    arg_types: ["number", "o-number"],
+    arg_types: ["number", "o-number"],   // o- means optional
     description: "Usage: move x y\nMoves for |x| seconds at y% speed; sign of x determines direction. Speed defaults to 100% if y not provided."
   }
 }

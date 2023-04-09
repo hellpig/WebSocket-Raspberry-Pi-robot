@@ -27,7 +27,7 @@ module.exports = {
   config: {
     name: "help",
     aliases: ["usage", "info"],
-    arg_types: ["o-string"],
+    arg_types: ["o-string"],   // o- means optional
     description: "Usage: help x\nGives usage of command x, or list of commands if a command name isn't provided"
   }
 }
