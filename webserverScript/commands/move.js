@@ -19,8 +19,9 @@ module.exports = {
     let speed = args[1];
     if(!speed) {
       speed = 100;
+    } else {
+      speed = Number(args[1]);
     }
-    speed = Number(args[1]);
 
     // Map degrees to an integer from 0 to 1000000
     //   for PWM for DC motor
