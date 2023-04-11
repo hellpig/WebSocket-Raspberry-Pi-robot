@@ -12,7 +12,10 @@ const pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
 const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
 const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
 http.listen(80);  //listen to port 80
-HTMLfolder = '/home/pi/nodetestScript/public';  // systemctl requires an absolute path
+
+// systemctl requires an absolute path
+const HTMLfolder = '/home/pi/nodetestScript/public';
+const CommandsFolder = '/home/pi/nodetestScript/commands';
 
 
 function handler(req, res) { //create server
@@ -124,17 +127,17 @@ let commands = new Map();
 let aliases = new Map();
 
 //The command list is the number of files in the commands folder ending in '.js'
-const commandlist = fs.readdirSync('./commands/').filter(c => c.endsWith('.js'));
+const commandlist = fs.readdirSync(CommandsFolder).filter(c => c.endsWith('.js'));
 
 //For each of the 'files' in the command list, load them when the server starts
 for(let file of commandlist) {
-  pull = require(`./commands/${file}`);
+  pull = require(`${CommandsFolder}/${file}`);
   commands.set(pull.config.name, pull);
   console.log(`${pull.config.name} loaded!`);
   if(pull.config.aliases) pull.config.aliases.forEach(a => aliases.set(a, pull.config.name));
 }
 
-/* the following are passed to files in /commands/
+/* the following are passed to files in CommandsFolder
    and can be modified by those files */
 let comVars = {
   commandlist: commands,
@@ -268,7 +271,9 @@ io.on('connection', function (socket) {// WebSocket Connection
   });
 
   socket.on('setGPIO', function(data) {
-    setGPIO();
+    if (!locked) {
+      setGPIO();
+    }
   });
 
 });
