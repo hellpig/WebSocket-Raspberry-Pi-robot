@@ -46,6 +46,6 @@ CodingKraken, [https://github.com/CodingKraken](https://github.com/CodingKraken)
 
 If you want to control a different servo motor or motors (or control the one I used differently), search for all instances of *pinServo* in all of the JavaScript files. If you want to control a different DC motor or motors (or control the one I used differently), search for all instances of *pinMotor* in all of the JavaScript files.
 
-If you want to create a new command (such as *pause*), add its file in the *commands* folder. In the file, export *errorCheck*, *run*, and *config* methods. See existing command files for guidance.
+If you want to create a new command (such as *pause*), add its file in the *commands* folder. In the file, export *errorCheck*, *run*, and *config*. See existing command files for guidance.
 
 ![screenshotScript](screenshotScript.jpg)
