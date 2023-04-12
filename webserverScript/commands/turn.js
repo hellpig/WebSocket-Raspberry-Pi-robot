@@ -1,10 +1,12 @@
 
+const maxAngle = 60;  // in degrees
+
 module.exports = {
   errorCheck: (args) => {
     let str = "";
     let degrees = Number(args[0]);
-    if(degrees > 90 || degrees < -90) {
-      str += "Degrees exceed the range from -90 to 90 degrees, ";
+    if(degrees > maxAngle || degrees < -maxAngle) {
+      str += "Degrees exceed the range from -" + maxAngle.toString() + " to " + maxAngle.toString() + " degrees, ";
     }
     return str;
   },
@@ -19,7 +21,7 @@ module.exports = {
 
     // Map degrees to an integer from 50000 to 100000 (out of a million)
     //   for servo PWM
-    let dutyCycle = Math.round(25000 * degrees/90) + 75000;
+    let dutyCycle = Math.round(25000 * degrees/maxAngle) + 75000;
 
     comvars.pinServoPWM.hardwarePwmWrite(comvars.frequency, dutyCycle);
 
@@ -39,6 +41,6 @@ module.exports = {
     name: "turn",
     aliases: ["rotate", "direction"],
     arg_types: ["number"],
-    description: "Usage: turn x\nTurns robot to x degrees. Sign of x indicates cw or ccw rotation. |x| is not to exceed 90."
+    description: "Usage: turn x\nTurns robot to x degrees. Sign of x indicates cw or ccw rotation. |x| is not to exceed " + maxAngle.toString() + "."
   }
 }
