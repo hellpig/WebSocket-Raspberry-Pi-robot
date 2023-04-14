@@ -45,12 +45,12 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 <script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
 <script>
 var socket = io(); //load socket.io-client and connect to the host that serves the page
-window.addEventListener("load", function(){ //when page loads
+
   let commandbox = document.getElementById("runcommand");
   commandbox.addEventListener("click", function() {
     socket.emit("commandinput", commandinput.value);
   });
-});
+
 socket.on('light', function(data) {
   document.getElementById("light").checked = data; //change checkbox
 });
