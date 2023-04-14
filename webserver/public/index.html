@@ -55,8 +55,6 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 <script>
 var socket = io(); //load socket.io-client and connect to the host that serves the page
 
-window.addEventListener("load", function(){ //when page loads
-
   var sliderH = document.getElementById("myRangeH");
   sliderH.addEventListener("input", function() {
     socket.emit("sliderH", Number(this.value));
@@ -114,8 +112,6 @@ document.addEventListener('keyup', (e) => {
     sliderV.value = 50;
     socket.emit("sliderV", 50);
   }
-});
-
 });
 
 function sendText() {
