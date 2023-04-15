@@ -185,7 +185,7 @@ io.on('connection', function (socket) {// WebSocket Connection
 
   //Handles execution of inputted commands
   socket.on('commandinput', function(data) {
-    let inputtedcommands = data.trim().split('\n');
+    let inputtedcommands = data.trim().toLowerCase().split('\n');
 
     //Each command is split between line breaks (one command per line), we loop over the number of commands and execute each command one at a time
 
