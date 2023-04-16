@@ -50,6 +50,6 @@ The code finds any improper syntax before starting to run the first line of your
 
 If you want to control a different servo motor or motors (or control the one I used differently), search for all instances of *pinServo* in all of the JavaScript files. If you want to control a different DC motor or motors (or control the one I used differently), search for all instances of *pinMotor* in all of the JavaScript files.
 
-If you want to create a new command (such as *pause* or *say*), create its file in the *commands* folder. In the file, export *errorCheck*, *run*, and *config*. See existing command files for guidance. Your command and any arguments should be lowercase because the .toLowerCase() method is used on the user's script.
+If you want to create a new command (such as *pause* or *say*), create its file in the *commands* folder. In the file, export *config*, *run*, and *errorCheck*. See existing command files for guidance. Your command's name, aliases, and any arguments should be lowercase because the .toLowerCase() method is used on the user's script.
 
 ![screenshotScript](screenshotScript.jpg)
