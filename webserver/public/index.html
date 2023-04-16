@@ -53,14 +53,15 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 
 <script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
 <script>
-var socket = io(); //load socket.io-client and connect to the host that serves the page
+const socket = io(); //load socket.io-client and connect to the host that serves the page
 
-  var sliderH = document.getElementById("myRangeH");
+
+  const sliderH = document.getElementById("myRangeH");
   sliderH.addEventListener("input", function() {
     socket.emit("sliderH", Number(this.value));
   });
 
-  var sliderV = document.getElementById("myRangeV");
+  const sliderV = document.getElementById("myRangeV");
   sliderV.addEventListener("input", function() {
     socket.emit("sliderV", Number(this.value));
   });
@@ -113,6 +114,8 @@ document.addEventListener('keyup', (e) => {
     socket.emit("sliderV", 50);
   }
 });
+
+
 
 function sendText() {
   socket.emit("text", document.getElementById("text").value);
