@@ -5,17 +5,27 @@ const url = require('url');
 const path = require('path');
 
 
-const { exec } = require("child_process");
-const Gpio = require('pigpio').Gpio;    // npm i pigpio
-const pinServoPWM = new Gpio(13, {mode: Gpio.OUTPUT});
-const pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
-const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
-const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
-http.listen(80);  //listen to port 80
+const hardware = true;   // this is false if, for example, running on Replit
 
-// systemctl requires an absolute path
+http.listen(80);        // use port 80 on Pi, but use 8080 on Replit
+
+// systemctl requires absolute paths
 const HTMLfolder = '/home/pi/nodetestScript/public';
 const CommandsFolder = '/home/pi/nodetestScript/commands';
+
+
+if (hardware) {
+  const { exec } = require("child_process");
+  const Gpio = require('pigpio').Gpio;    // npm i pigpio
+  const pinServoPWM = new Gpio(13, {mode: Gpio.OUTPUT});
+  const pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
+  const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
+}
+const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
+const maxChars = 500;   // max characters for user-inputted script
+
+
+
 
 
 function handler(req, res) { //create server
@@ -96,7 +106,7 @@ let checkerror = (command, args) => {
     //Make sure that arguments which haven't been included are optional. If they are required arguments, then report the error
     for(let i = 0; i < dif; i++) {
       let currentarg = realcommand.config.arg_types[args.length+i];
-      if(!currentarg.includes("o-")) {
+      if(!currentarg.includes("optional-")) {
         error += `Expected more arguments, `;
       }
     }
@@ -131,20 +141,22 @@ const commandlist = fs.readdirSync(CommandsFolder).filter(c => c.endsWith('.js')
 
 //For each of the 'files' in the command list, load them when the server starts
 for(let file of commandlist) {
-  pull = require(`${CommandsFolder}/${file}`);
+  try {
+    pull = require(`${CommandsFolder}/${file}`);
+  } catch(err) {   // needed if CommandsFolder is a local folder
+    pull = require(`./${CommandsFolder}/${file}`);
+  }
   commands.set(pull.config.name, pull);
   console.log(`${pull.config.name} loaded!`);
   if(pull.config.aliases) pull.config.aliases.forEach(a => aliases.set(a, pull.config.name));
 }
 
-/* the following are passed to files in CommandsFolder
+/* the following dictionary is passed to files in CommandsFolder
    and can be modified by those files */
 let comVars = {
-  commandlist: commands,
+  hardware: hardware,
+  commandlist: commands,  // a Map actually
   frequency: frequency,
-  pinServoPWM: pinServoPWM,
-  pinMotorPWM: pinMotorPWM,
-  pinMotor: pinMotor,
 
   /*
   TimeCumulative is to be updated by
@@ -162,6 +174,11 @@ let comVars = {
 
   helpText: ""
 }
+if (hardware) {
+  comVars["pinServoPWM"] = pinServoPWM;
+  comVars["pinMotorPWM"] = pinMotorPWM;
+  comVars["pinMotor"] = pinMotor;
+}
 
 function setGPIO() {
 
@@ -170,12 +187,14 @@ function setGPIO() {
   /* use GPIO12 and GPIO23 to control the DC motor via a drv8833 driver */
   /* initialize DC motor to fast-stop setting, and initialize servo to point forward */
 
-  pinServoPWM.mode(Gpio.OUTPUT);
-  pinMotorPWM.mode(Gpio.OUTPUT);
-  pinMotor.mode(Gpio.OUTPUT);
-  pinServoPWM.hardwarePwmWrite(frequency, Math.round(1E6 * 1.5/20));  // 0 <= dutyCycle <= 1E6
-  pinMotorPWM.hardwarePwmWrite(frequency, 1E6);  
-  pinMotor.digitalWrite(1);
+  if (hardware) {
+    pinServoPWM.mode(Gpio.OUTPUT);
+    pinMotorPWM.mode(Gpio.OUTPUT);
+    pinMotor.mode(Gpio.OUTPUT);
+    pinServoPWM.hardwarePwmWrite(frequency, Math.round(1E6 * 1.5/20));  // 0 <= dutyCycle <= 1E6
+    pinMotorPWM.hardwarePwmWrite(frequency, 1E6);  
+    pinMotor.digitalWrite(1);
+  }
 
   console.log("GPIO has been setup");
 }
@@ -185,9 +204,14 @@ io.on('connection', function (socket) {// WebSocket Connection
 
   //Handles execution of inputted commands
   socket.on('commandinput', function(data) {
-    let inputtedcommands = data.trim().toLowerCase().split('\n');
 
-    //Each command is split between line breaks (one command per line), we loop over the number of commands and execute each command one at a time
+    if(data.length > maxChars) {
+      socket.emit("help", "Error: number of script characters exceeds " + maxChars.toString());
+      return;
+    }
+
+    //Each command is split between line breaks (one command per line)
+    let inputtedcommands = data.trim().toLowerCase().split('\n');
 
     let args;
     let cmd;
@@ -196,10 +220,15 @@ io.on('connection', function (socket) {// WebSocket Connection
 
     for(let j = 0; j < inputtedcommands.length; j++) {
 
-      /*args is initially the raw data for a specific line, the first element of args is removed, as this will be interpretted as the command. If args is completely empty, then we don't have a command, so skip to the next line */
+      /*
+        args is initially the raw data for a specific line, the first element of args is removed,
+        as this will be interpreted as the command.
+        If args is completely empty, then we don't have a command,
+        so skip to the next line
+      */
       args = inputtedcommands[j].split(/\s+/);
       while(args[0].trim() == "") {
-        //We remove lines from inputtedcommands[] if they're empty and don't contain anything to be interpretted
+        //We remove lines from inputtedcommands[] if they're empty and don't contain anything to be interpreted
         inputtedcommands.splice(j, 1);
         if(j >= inputtedcommands.length) break;
         args = inputtedcommands[j].split(/\s+/);
@@ -210,9 +239,12 @@ io.on('connection', function (socket) {// WebSocket Connection
       //If inputted command isn't a valid command, throw error
       if(checkerror(cmd, args) != "") {
         errorlog += `Error(s) found at command ${j+1}: ${checkerror(cmd, args)}\n`;
-        socket.emit("help", errorlog);
         noerrors = false;
       }
+    }
+
+    if(!noerrors) {  // if errors
+      socket.emit("help", errorlog);
     }
 
     if(noerrors && !locked) {
@@ -257,7 +289,9 @@ io.on('connection', function (socket) {// WebSocket Connection
     /* for my USB speakers */
     // I don't believe code injection is possible with the following code.
     // We must be careful since this code is being run by superuser.
-    exec("/usr/bin/espeak '" + data.replace(/\'/g, '’') + "' -v english-us+f5 --stdout | /usr/bin/aplay -D plughw:1", (error, stdout, stderr) => {});
+    if (hardware) {
+      exec("/usr/bin/espeak '" + data.replace(/\'/g, '’') + "' -v english-us+f5 --stdout | /usr/bin/aplay -D plughw:1", (error, stdout, stderr) => {});
+    }
   });
 
   socket.on('halt', function(data) {
@@ -266,7 +300,9 @@ io.on('connection', function (socket) {// WebSocket Connection
     if (data == "halt") {
       stop(false);
       console.log("Halting. You may unplug the Pi in a minute.");
-      exec("/sbin/halt", (error, stdout, stderr) => {});
+      if (hardware) {
+        exec("/sbin/halt", (error, stdout, stderr) => {});
+      }
     }
   });
 
@@ -281,12 +317,14 @@ io.on('connection', function (socket) {// WebSocket Connection
 
 function stop(close = true) {  // stops code in a safe way
 
-  pinServoPWM.digitalWrite(0);
-  pinMotorPWM.digitalWrite(0);
-  pinMotor.digitalWrite(0);
-  pinServoPWM.mode(Gpio.INPUT);
-  pinMotorPWM.mode(Gpio.INPUT);
-  pinMotor.mode(Gpio.INPUT);
+  if (hardware) {
+    pinServoPWM.digitalWrite(0);
+    pinMotorPWM.digitalWrite(0);
+    pinMotor.digitalWrite(0);
+    pinServoPWM.mode(Gpio.INPUT);
+    pinMotorPWM.mode(Gpio.INPUT);
+    pinMotor.mode(Gpio.INPUT);
+  }
 
   if (close) {
     console.log(" bye!");

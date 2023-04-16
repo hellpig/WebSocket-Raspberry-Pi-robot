@@ -1,4 +1,12 @@
 module.exports = {
+
+  config: {
+    name: "move",
+    aliases: ["run", "drive", "go"],
+    arg_types: ["number", "optional-number"],
+    description: "Usage: move x y\nMoves for |x| seconds at y% speed; sign of x determines direction. Speed defaults to 100% if y not provided."
+  },
+
   errorCheck: (args) => {
     let str = "";
     let t = Number(args[0]);
@@ -12,6 +20,7 @@ module.exports = {
     }
     return str;
   },
+
   run: (socket, comvars, args) => {
 
     let t = Number(args[0]);
@@ -41,8 +50,10 @@ module.exports = {
     //Wait until all other queued commands have executed
     setTimeout(() => {
 
-      comvars.pinMotorPWM.hardwarePwmWrite(comvars.frequency, dutyCycle);
-      comvars.pinMotor.digitalWrite( pin2 );
+      if (comvars.hardware) {
+        comvars.pinMotorPWM.hardwarePwmWrite(comvars.frequency, dutyCycle);
+        comvars.pinMotor.digitalWrite( pin2 );
+      }
 
       let str = `Move command executing for ${t} seconds, ${dir}!`;
       comvars.helpText += str;
@@ -53,8 +64,10 @@ module.exports = {
       setTimeout(() => {
 
           // fast stop
-          comvars.pinMotorPWM.hardwarePwmWrite(comvars.frequency, 1E6);  
-          comvars.pinMotor.digitalWrite(1);
+          if (comvars.hardware) {
+            comvars.pinMotorPWM.hardwarePwmWrite(comvars.frequency, 1E6);  
+            comvars.pinMotor.digitalWrite(1);
+          }
 
           //When done, display message
           comvars.helpText += " Done.\n\n";
@@ -69,11 +82,6 @@ module.exports = {
     //   (doesn't wait for above timeouts)
     comvars.timeCumulative += t + 0.5;
 
-  },
-  config: {
-    name: "move",
-    aliases: ["run", "drive", "go"],
-    arg_types: ["number", "o-number"],   // o- means optional
-    description: "Usage: move x y\nMoves for |x| seconds at y% speed; sign of x determines direction. Speed defaults to 100% if y not provided."
   }
+
 }
