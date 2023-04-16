@@ -52,4 +52,6 @@ If you want to control a different servo motor or motors (or control the one I u
 
 If you want to create a new command (such as *pause* or *say*), create its file in the *commands* folder. In the file, export *config*, *run*, and *errorCheck*. See existing command files for guidance. Your command's name, aliases, and any arguments should be lowercase because the .toLowerCase() method is used on the user's script.
 
+You can test this code at Replit.com if you make a Node.js project. In webserver.js, set *hardware* to *false*, change port from 80 to 8080, set *HTMLfolder* and *CommandsFolder* to correct relative folder, and run *node webserver.js* in the Shell (no *sudo*).
+
 ![screenshotScript](screenshotScript.jpg)
