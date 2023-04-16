@@ -22,7 +22,6 @@ if (hardware) {
   const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
 }
 const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
-const maxChars = 500;   // max characters for user-inputted script
 
 
 
@@ -204,11 +203,6 @@ io.on('connection', function (socket) {// WebSocket Connection
 
   //Handles execution of inputted commands
   socket.on('commandinput', function(data) {
-
-    if(data.length > maxChars) {
-      socket.emit("help", "Error: number of script characters exceeds " + maxChars.toString());
-      return;
-    }
 
     //Each command is split between line breaks (one command per line)
     let inputtedcommands = data.trim().toLowerCase().split('\n');

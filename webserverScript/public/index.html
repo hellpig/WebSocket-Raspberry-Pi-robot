@@ -44,12 +44,21 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 
 <script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
 <script>
-var socket = io(); //load socket.io-client and connect to the host that serves the page
+const socket = io(); //load socket.io-client and connect to the host that serves the page
 
-  let commandbox = document.getElementById("runcommand");
-  commandbox.addEventListener("click", function() {
-    socket.emit("commandinput", commandinput.value);
-  });
+const maxChars = 500;   // max characters for user-inputted script
+const commandbox = document.getElementById("runcommand");
+const commandinput = document.getElementById("commandinput");
+
+commandbox.addEventListener("click", function() {
+  //if(commandinput.value.length > 0) {
+    if (commandinput.value.length <= maxChars) {
+      socket.emit("commandinput", commandinput.value);
+    } else {
+      commandinput.value = "Error: number of script characters exceeds " + maxChars.toString() + '\n' + commandinput.value;
+    }
+  //}
+});
 
 socket.on('light', function(data) {
   document.getElementById("light").checked = data; //change checkbox
