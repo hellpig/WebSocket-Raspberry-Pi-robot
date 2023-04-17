@@ -14,12 +14,17 @@ const HTMLfolder = '/home/pi/nodetestScript/public';
 const CommandsFolder = '/home/pi/nodetestScript/commands';
 
 
+let exec;
+let Gpio;
+let pinServoPWM;
+let pinMotorPWM;
+let pinMotor;
 if (hardware) {
-  const { exec } = require("child_process");
-  const Gpio = require('pigpio').Gpio;    // npm i pigpio
-  const pinServoPWM = new Gpio(13, {mode: Gpio.OUTPUT});
-  const pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
-  const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
+  exec = require("child_process").exec;
+  Gpio = require('pigpio').Gpio;    // npm i pigpio
+  pinServoPWM = new Gpio(13, {mode: Gpio.OUTPUT});
+  pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
+  pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
 }
 const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
 
