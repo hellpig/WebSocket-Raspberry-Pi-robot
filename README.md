@@ -22,6 +22,7 @@ Nice features...
 
 Fixing various connection issues...
 - If you don't have access to the router, things might still work on a local network. On Google Chrome, if [http://raspberrypi.local](http://raspberrypi.local) works on at least one device, you can find the Pi's IP address by going to chrome://net-internals/#dns
+- If the webcam never shows on other devices, find the line *stream_localhost on* in /etc/motion/motion.conf, change *on* to *off*, then restart *motion*.
 - If the webcam doesn't work on Google Chrome when using raspberrypi.local and the webcam never works when using the IPv6 address, find the line *ipv6_enabled off* in /etc/motion/motion.conf, change *off* to *on*, then restart *motion*.
 - If you are connecting a computer to the Pi via a phone's hotspot and the connection is finicky, try unplugging the computer's Ethernet cable!
 
