@@ -128,12 +128,17 @@ io.on('connection', function(socket) {// WebSocket Connection
   });
 
   socket.on('halt', function(data) {
+    data = data.trim().toLowerCase();
     console.log("halt text = " + data);
 
     if (data == "halt") {
       stop(false);
       console.log("Halting. You may unplug the Pi in a minute.");
       exec("/sbin/halt", (error, stdout, stderr) => {});
+    } else if (data == "reboot") {
+      stop(false);
+      console.log("Rebooting the Pi.");
+      exec("/sbin/reboot", (error, stdout, stderr) => {});
     }
   });
 
