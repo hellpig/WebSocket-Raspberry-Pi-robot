@@ -15,41 +15,26 @@ module.exports = {
   run: (socket, comvars, args) => {
 
     let str = "";
+
     if(!args[0]) {
+
       str = "Commands:";
-      comvars.commandlist.forEach(function(value, key) {
+      comvars.commands.forEach(function(value, key) {
         str += "\n " + key;
       });
       str += "\nType one the following for more help:";
-      comvars.commandlist.forEach(function(value, key) {
+      comvars.commands.forEach(function(value, key) {
         str += "\n help " + key;
       });
+
     } else {
 
-      let aliasArray = [];
-      comvars.commandlist.forEach(function(value, key) {
-        aliasArray = aliasArray.concat(value.config.aliases);
-      });
+      let command = comvars.commands.get(args[0]) || comvars.commands.get(comvars.aliases.get(args[0]));
 
-      let command;
-      if(comvars.commandlist.has(args[0])) {
-
-        command = comvars.commandlist.get(args[0]);
-
-        str = `Info regarding ${args[0]}:\nName: ${command.config.name}\n${command.config.description}\nArgument Types: ${command.config.arg_types}`;
-
-      } else if(aliasArray.includes(args[0])) {
-
-        comvars.commandlist.forEach(function(value, key) {
-          if(value.config.aliases.includes(args[0])) {
-            command = value;
-          }
-        });
-
-        str = `Info regarding ${args[0]}:\nName: ${command.config.name}\n${command.config.description}\nArgument Types: ${command.config.arg_types}`;
-
-      } else {
+      if(!command) {
         str = `${args[0]} is not a valid command!`;
+      } else {
+        str = `Info regarding ${args[0]}:\nName: ${command.config.name}\n${command.config.description}\nArgument Types: ${command.config.arg_types}`;
       }
 
     }

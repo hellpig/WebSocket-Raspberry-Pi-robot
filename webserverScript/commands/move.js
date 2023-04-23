@@ -1,3 +1,6 @@
+
+const maxMove = 10;  // in seconds
+
 module.exports = {
 
   config: {
@@ -10,8 +13,8 @@ module.exports = {
   errorCheck: (args) => {
     let str = "";
     let t = Number(args[0]);
-    if (Math.abs(t) > 10) {
-      str += "Move command must not be for more than 10 seconds, ";
+    if (Math.abs(t) > maxMove) {
+      str += "Move command must not be for more than " + maxMove.toString() + " seconds, ";
     } else if (t == 0) {
       str += "Move command must be for more than 0 seconds, "
     }
@@ -44,7 +47,7 @@ module.exports = {
       dir = "backwards";
       dutyCycle = 1E6 - dutyCycle;
       pin2 = 1;
-      t = -t;
+      t = -t;    // make t positive
     }
 
     //Wait until all other queued commands have executed

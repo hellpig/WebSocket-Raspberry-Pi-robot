@@ -159,8 +159,9 @@ for(let file of commandlist) {
    and can be modified by those files */
 let comVars = {
   hardware: hardware,
-  commandlist: commands,  // a Map actually
   frequency: frequency,
+  commands: commands,  // for help command
+  aliases: aliases,    // for help command
 
   /*
   TimeCumulative is to be updated by
