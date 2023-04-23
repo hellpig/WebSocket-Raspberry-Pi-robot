@@ -10,7 +10,7 @@ npm install socket.io
 npm install pigpio
 ```
 
-Run it via: *sudo node webserver.js* . Both *pigpio* and *halt* require *sudo*. I recommend using *systemctl* to start the code at startup (*sudo* is then not needed before *node* since *systemctl* is run as root). You can also automatically start the *motion* server via *systemctl*.
+Run it via: *sudo node webserver.js* . Note that *pigpio*, *halt*, and *reboot* require *sudo*. I recommend using *systemctl* to start the code at startup (*sudo* is then not needed before *node* since *systemctl* is run as root). You can also automatically start the *motion* server via *systemctl*.
 
 Once the code is running, just type the Pi's IP address into the web browser of any device that has access to that IP address! The following should appear...
 
