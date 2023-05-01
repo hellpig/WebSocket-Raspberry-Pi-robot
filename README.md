@@ -21,7 +21,7 @@ Nice features...
 - The vertical slider automatically goes back to the middle when you are no longer holding it.
 
 Fixing various connection issues...
-- If you don't have access to the router, things might still work on a local network. On Google Chrome, if [http://raspberrypi.local](http://raspberrypi.local) works on at least one device, you can find the Pi's IP address by going to chrome://net-internals/#dns
+- If you don't have access to the router, things might still work on a local network. On Google Chrome, if [http://raspberrypi.local](http://raspberrypi.local) works on at least one device, you can find the Pi's IP address by going to chrome://net-internals/#dns . If that doesn't work, I installed a free Android app, WiFiman, that, for devices on the same WiFi network, lists names (such as Raspberry Pi) and their IP addresses via its Discovery tab. I believe you can get this app on Apple too.
 - If the webcam never shows on other devices, find the line *stream_localhost on* in /etc/motion/motion.conf, change *on* to *off*, then restart *motion*.
 - If the webcam doesn't work on Google Chrome when using raspberrypi.local and the webcam never works when using the IPv6 address, find the line *ipv6_enabled off* in /etc/motion/motion.conf, change *off* to *on*, then restart *motion*.
 - In /etc/motion/motion.conf, I also had to set **both** the *framerate* and *stream_maxrate* to 15 for the video not to have a huge lag. Setting *ffmpeg_output_movies* to *off* can also be smart so that videos aren't saved on the Pi.
@@ -36,7 +36,7 @@ The Node.js code runs a servo motor that connects to a geared DC motor to contro
 - dual-shaft geared DC motor with a wheel attached on each side. An L bracket (from Adafruit) was used to connect it to the servo motor.
 - $13 USB speakers from Amazon. The Node.js code can easily be changed to use non-USB speakers, but USB speakers are great because they are powered through the USB!
 - $5 USB webcam from Amazon
-- Ayeway PD-2620W battery pack. The 26,800 mAh capacity is way more than we need, and we only used the 5 volts from any of the 3 blue USB ports, which have a 3-amp-total maximum. USB cables were used to power things. The cables can be spliced to more convenient wires that are thick and short enough to carry requires current. Grounds between USB cables were connected on a mini breadboard (the same one that had the DRV8833 and SN74AHCT125N) to create a common ground. The Raspberry Pi initially got a dedicated USB cable to power it (motors were powered from another cable from the same battery). Even so, when the DC motor was stalled or was not allowed to spin freely, the battery was likely delivering approximately its 3-amp limit, and the Raspberry Pi would not get enough voltage causing the webcam to not function well (though I partly blame the very cheap webcam). We fixed this by using a dedicated 2-amp battery for the Raspberry Pi.
+- Ayeway PD-2620W battery pack. The 26,800 mAh capacity is way more than we need, and we only used the 5 volts from any of the 3 blue USB ports, which have a 3-amp-total maximum. USB cables were used to power things. The cables can be spliced to more convenient wires that are thick and short enough to carry requires current. Grounds between USB cables were connected on a mini breadboard (the same one that had the DRV8833 and SN74AHCT125N) to create a common ground. The Raspberry Pi initially got a dedicated USB cable to power it (motors were powered from another cable from the same battery). Even so, when the DC motor was stalled or was not allowed to spin freely, the battery was likely delivering approximately its 3-amp limit, and the Raspberry Pi would not get enough voltage causing the webcam to not function well (though I blame the very cheap webcam because nicer webcams are less finicky). We fixed this by using a dedicated 2-amp battery for the Raspberry Pi.
 - 2 rigid (non-swivel) casters with a wheel diameter of 32 mm
 
 ![robot](robot.jpg)
@@ -57,3 +57,22 @@ If you want to create a new command (such as *pause* or *say*), create its file 
 You can test this code at Replit.com if you make a Node.js project. In webserver.js, set *hardware* to *false*, change port from 80 to 8080, set *HTMLfolder* and *CommandsFolder* to correct relative folder, and run *node webserver.js* in the Shell (no *sudo*).
 
 ![screenshotScript](screenshotScript.jpg)
+
+
+## Receiving audio for the Pi
+
+To send audio, the Pi needs a USB microphone. Luckily, many USB webcams have built-in microphones!
+
+Instead of sending the audio itself, I was hoping to do speech-to-text code. I tried AssemblyAI during April, 2023, but they no longer seem to have a free trial despite what their website says (when I try to connect my Pi, it tells me to pay them). However, I would rather not send a bunch of data over the Internet, so an offline approach might seem best. I installed SpeechCat (spchcat) on the Pi, but, as expected, it was extremely slow (there was a 30 second delay, which seemed to grow as it ran) on my Pi 3B and took up much computing power. SpeechCat is extremely easy to install and run (though getting it to install on my 64-bit OS required a few tricks), but I would need a much better processor with a good fan.
+
+We can send audio directly over a network or over the Internet via VLC...
+```
+cvlc alsa://plughw:1 --sout '#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=http,mux=mp3,dst=:8087}'
+```
+For my microphone, after doing `arecord -l` and `arecord -L` and experimenting, I learned that *plughw:CARD=C920,DEV=0* is what works for my specific microphone, though the *plughw:1* in the above command works too! By the way, if *plughw:1* isn't working for the USB *speakers*, you can do something similar for speakers using `aplay -l` and `aplay -L`. On Chrome (but not on Firefox and barely on Safari), viewing a webpage that contains
+```
+<audio controls>
+  <source src="http://<ip address>:8087" type="audio/mpeg">
+</audio>
+```
+works okay as long as you play the audio immediately once the page starts or move the progress slider all the way to the right. Instead of this webpage, if you have VLC installed on your computer, to hear the audio, just open VLC then open network `http://<IP address>:8087`
