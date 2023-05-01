@@ -76,3 +76,5 @@ For my microphone, after doing `arecord -l` and `arecord -L` and experimenting, 
 </audio>
 ```
 works okay as long as you play the audio immediately once the page starts or move the progress slider all the way to the right. Instead of this webpage, if you have VLC installed on your computer, to hear the audio, just open VLC then open network `http://<IP address>:8087`
+
+Please let me know if you find a better solution!
