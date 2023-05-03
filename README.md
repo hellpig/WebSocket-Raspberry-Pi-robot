@@ -59,7 +59,7 @@ You can test this code at Replit.com if you make a Node.js project. In webserver
 ![screenshotScript](screenshotScript.jpg)
 
 
-## Next step: receiving audio for the Pi
+## Next step: receiving audio from the Pi
 
 To send audio, the Pi needs a USB microphone. Luckily, many USB webcams have built-in microphones!
 
