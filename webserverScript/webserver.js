@@ -96,7 +96,7 @@ let locked = false;
 let checkerror = (command, args) => {
   let error = "";
   let realcommand = commands.get(command) || commands.get(aliases.get(command));
-  
+
   //Check to make sure the inputted command is actually a command
   if(!realcommand) {
     error = `\"${command}\" is not a real command`;
@@ -120,7 +120,7 @@ let checkerror = (command, args) => {
     error += `Too many arguments, `;
   } else {
     for(let i = 0; i < args.length; i++) {
-      
+
       if((isNaN(parseFloat(args[i])) && realcommand.config.arg_types[i].includes("number"))  || (!isNaN(parseFloat(args[i])) && realcommand.config.arg_types[i].includes("string"))) {
         error += `Argument #${i+1} does not match required argument type \"${realcommand.config.arg_types[i]}\", `;
       }
@@ -197,14 +197,14 @@ function setGPIO() {
     pinMotorPWM.mode(Gpio.OUTPUT);
     pinMotor.mode(Gpio.OUTPUT);
     pinServoPWM.hardwarePwmWrite(frequency, Math.round(1E6 * 1.5/20));  // 0 <= dutyCycle <= 1E6
-    pinMotorPWM.hardwarePwmWrite(frequency, 1E6);  
+    pinMotorPWM.hardwarePwmWrite(frequency, 1E6);
     pinMotor.digitalWrite(1);
   }
 
   console.log("GPIO has been setup");
 }
 
-setGPIO();
+//setGPIO();
 io.on('connection', function (socket) {// WebSocket Connection
 
   //Handles execution of inputted commands
@@ -264,7 +264,7 @@ io.on('connection', function (socket) {// WebSocket Connection
 
         //Grab the command, or, if it's an alias, grab the corresponding command to that alias.
         let command = commands.get(cmd) || commands.get(aliases.get(cmd));
-        
+
         //Run Command
         //Increments comVars.timeCumulative
         command.run(socket, comVars, args);
