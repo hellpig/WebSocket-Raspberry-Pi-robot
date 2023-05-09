@@ -81,13 +81,13 @@ function setGPIO() {
   pinMotorPWM.mode(Gpio.OUTPUT);
   pinMotor.mode(Gpio.OUTPUT);
   pinServoPWM.hardwarePwmWrite(frequency, Math.round(1E6 * 1.5/20));  // 0 <= dutyCycle <= 1E6
-  pinMotorPWM.hardwarePwmWrite(frequency, 1E6);  
+  pinMotorPWM.hardwarePwmWrite(frequency, 1E6);
   pinMotor.digitalWrite(1);
 
   console.log("GPIO has been setup");
 }
 
-setGPIO();
+//setGPIO();
 let dataH = 50;
 let dataV = 50;
 io.on('connection', function(socket) {// WebSocket Connection
