@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Robot Controller</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style> 
 input.vertical {
   transform: rotate(270deg);
@@ -33,7 +33,8 @@ body {
   <br>Vertical slider in center position causes "fast stop".
 </p>
 
-<p><img src="" alt="webcam" width="320" height="240" id="cam" /></p>
+<p><img src="" alt="webcam" width="320" height="240" id="cam"></p>
+<!-- src="" is invalid HTML, but it works! -->
 <script>
 document.getElementById('cam').src = 'http://' + window.location.hostname + ':8081/' ;
 </script>
@@ -50,7 +51,7 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
   <br>You may also enter "reboot" to reboot the Pi.
 </p>
 
-<p><img src="poggers.png" alt="poggers" width="144" height="144" /></p>
+<p><img src="poggers.png" alt="poggers" width="144" height="144"></p>
 
 <script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
 <script>
@@ -85,6 +86,8 @@ const socket = io(); //load socket.io-client and connect to the host that serves
     socket.emit("sliderV", 50);
   });
 
+
+/* note that .keyCode is deprecated in favor of .key */
 
 document.addEventListener('keydown', (e) => {
   if (e.keyCode == '37') {   // left
