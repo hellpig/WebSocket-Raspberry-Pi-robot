@@ -7,7 +7,7 @@ module.exports = {
     name: "turn",
     aliases: ["rotate", "direction"],
     arg_types: ["number"],
-    description: "Usage: turn x\nTurns robot to x degrees. Sign of x indicates cw or ccw rotation. |x| is not to exceed " + maxAngle.toString() + "."
+    description: "Usage: turn x\nTurns robot wheels to x degrees. Sign of x indicates cw or ccw rotation. |x| is not to exceed " + maxAngle.toString() + "."
   },
 
   errorCheck: (args) => {
@@ -23,21 +23,23 @@ module.exports = {
 
     let degrees = Number(args[0]);
 
-    let dir = "CCW";
+    let dir = "";
     if(degrees < 0) {
-      dir = "CW";
+      dir = " CW";
+    } else if (degrees > 0) {
+      dir = " CCW";
     }
 
     // Map degrees to an integer from 50000 to 100000 (out of a million)
     //   for servo PWM
     let dutyCycle = Math.round(25000 * degrees/maxAngle) + 75000;
 
-    if (comvars.hardware) {
-      comvars.pinServoPWM.hardwarePwmWrite(comvars.frequency, dutyCycle);
-    }
-
     setTimeout(() => {
-      let str = `Rotated to ${Math.abs(degrees)} degrees ${dir}!`;
+      if (comvars.hardware) {
+        comvars.pinServoPWM.hardwarePwmWrite(comvars.frequency, dutyCycle);
+      }
+
+      let str = `Steering set to ${Math.abs(degrees)} degrees${dir}!`;
       comvars.helpText += str + "\n\n";
       socket.emit("help", comvars.helpText);
       socket.broadcast.emit("help", comvars.helpText);
