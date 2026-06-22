@@ -37,11 +37,12 @@ body {
 <!-- src="" is invalid HTML, but it works! -->
 <script>
 document.getElementById('cam').src = 'http://' + window.location.hostname + ':8081/' ;
+// if square brackets around IPv6 literals aren't appearing, write fancier code to handle it instead of the above
 </script>
 
 <p>
   Text for robot to speak: <input id="text"> <input type="button" value="Send text" onclick="sendText()">
-  <br>If robot is busy speaking something else, your message will never be spoken.
+  <br>If robot is busy speaking something else, your message may never be spoken.
 </p>
 <p>
   <input type="button" value="Reset GPIO settings" onclick="resetGPIO()">
@@ -56,6 +57,19 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 <script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
 <script>
 const socket = io(); //load socket.io-client and connect to the host that serves the page
+/*
+// do this instead if testing this file not on your Raspberry Pi
+const socket = {
+  emit: (...args) => console.log("socket.emit", ...args),
+  on: (...args) => console.log("socket.on", ...args)
+};
+*/
+
+function stopMotor() {
+  sliderV.value = 50;
+  socket.emit("sliderV", 50);
+}
+
 
 
   const sliderH = document.getElementById("myRangeH");
@@ -67,24 +81,13 @@ const socket = io(); //load socket.io-client and connect to the host that serves
   sliderV.addEventListener("input", function() {
     socket.emit("sliderV", Number(this.value));
   });
-  document.getElementById("myRangeV").addEventListener("touchend", () => {
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  });
-  document.getElementById("myRangeV").addEventListener("touchcancel", () => {
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  });
-/*
-  document.getElementById("myRangeV").addEventListener("mouseup", () => {
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  });
-*/
-  document.getElementById("myRangeV").addEventListener("mouseleave", () => {
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  });
+
+  sliderV.addEventListener("touchend", stopMotor);
+  sliderV.addEventListener("touchcancel", stopMotor);
+  //sliderV.addEventListener("mouseup", stopMotor);
+  sliderV.addEventListener("mouseleave", stopMotor);
+  //sliderV.addEventListener("pointerup", stopMotor);
+  //sliderV.addEventListener("pointercancel", stopMotor);
 
 
 /* note that .keyCode is deprecated in favor of .key */
@@ -109,14 +112,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
-  if (e.keyCode == '38') {  // up key
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  }
-  if (e.keyCode == '40') {  // down key
-    sliderV.value = 50;
-    socket.emit("sliderV", 50);
-  }
+  if (e.keyCode == '38') { stopMotor(); } // up key
+  if (e.keyCode == '40') { stopMotor(); } // down key
 });
 
 
