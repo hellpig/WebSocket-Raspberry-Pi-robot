@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Robot Controller</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
   body {
     background-color: salmon;
@@ -13,9 +13,11 @@
 </head>
 <body>
 
-<p><img src="" alt="webcam" width="320" height="240" id="cam" /></p>
+<p><img src="" alt="webcam" width="320" height="240" id="cam"></p>
+<!-- src="" is invalid HTML, but it works! -->
 <script>
 document.getElementById('cam').src = 'http://' + window.location.hostname + ':8081/' ;
+// if square brackets around IPv6 literals aren't appearing, write fancier code to handle it instead of the above
 </script>
 
 <label> Running
@@ -32,7 +34,7 @@ document.getElementById('cam').src = 'http://' + window.location.hostname + ':80
 
 <p>
   <b>Text for robot to speak</b>: <input id="text"> <input type="button" value="Send text" onclick="sendText()">
-  <br>If robot is busy speaking something else, your message will never be spoken.
+  <br>If robot is busy speaking something else, your message may never be spoken.
 </p>
 <p>
   <input type="button" value="Reset GPIO settings" onclick="resetGPIO()">
@@ -65,7 +67,7 @@ socket.on('light', function(data) {
   document.getElementById("light").checked = data; //change checkbox
 });
 socket.on('help', function(data) {
-  document.getElementById("helpText").innerHTML = data;
+  document.getElementById("helpText").textContent = data;
 });
 
 function sendText() {
