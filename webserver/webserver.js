@@ -12,19 +12,19 @@ const pinMotorPWM = new Gpio(12, {mode: Gpio.OUTPUT});
 const pinMotor = new Gpio(23, {mode: Gpio.OUTPUT});
 const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
 http.listen(80);  //listen to port 80
-HTMLfolder = '/home/pi/nodetest/public';  // systemctl requires an absolute path
+const HTMLfolder = '/home/pi/nodetest/public';  // systemctl requires an absolute path
 
 
-function handler(req, res) { //create server
+function handler(req, res) { //create server; we don't check if a hacker is doing /../some-file
   //console.log(`${req.method} ${req.url}`);
 
   // parse URL
   const parsedUrl = url.parse(req.url);
   // extract URL path
   let pathname = `${HTMLfolder}${parsedUrl.pathname}`;
-  // based on the URL path, extract the file extention. e.g. .js, .doc, ...
+  // based on the URL path, extract the file extension. e.g. .js, .doc, ...
   let ext = path.parse(pathname).ext;
-  // maps file extention to MIME type
+  // maps file extension to MIME type
   const map = {
     '.ico': 'image/x-icon',
     '.html': 'text/html',
@@ -87,12 +87,23 @@ function setGPIO() {
   console.log("GPIO has been setup");
 }
 
+// to prevent someone from putting something like socket.emit("sliderV", 999999) into their browser console
+function clampSlider(data) {
+  const x = Number(data);
+  if (!Number.isFinite(x)) return null;
+  return Math.max(0, Math.min(100, Math.round(x)));
+}
+
+
 //setGPIO();
 let dataH = 50;
 let dataV = 50;
 io.on('connection', function(socket) {// WebSocket Connection
 
   socket.on('sliderH', function(data) {
+    data = clampSlider(data);
+    if (data === null) return;
+
     console.log("hSlider = " + data);
     socket.broadcast.emit("hSliderUpdate", data);
     dataH = data;
@@ -104,6 +115,9 @@ io.on('connection', function(socket) {// WebSocket Connection
   });
 
   socket.on('sliderV', function(data) {
+    data = clampSlider(data);
+    if (data === null) return;
+
     console.log("vSlider = " + data);
     socket.broadcast.emit("vSliderUpdate", data);
     dataV = data;
