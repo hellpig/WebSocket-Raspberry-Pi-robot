@@ -32,16 +32,16 @@ const frequency = 50;   // 50-Hz hardware PWM is needed for the servo
 
 
 
-function handler(req, res) { //create server
+function handler(req, res) { //create server; we don't check if a hacker is doing /../some-file
   //console.log(`${req.method} ${req.url}`);
 
   // parse URL
   const parsedUrl = url.parse(req.url);
   // extract URL path
   let pathname = `${HTMLfolder}${parsedUrl.pathname}`;
-  // based on the URL path, extract the file extention. e.g. .js, .doc, ...
+  // based on the URL path, extract the file extension. e.g. .js, .doc, ...
   let ext = path.parse(pathname).ext;
-  // maps file extention to MIME type
+  // maps file extension to MIME type
   const map = {
     '.ico': 'image/x-icon',
     '.html': 'text/html',
@@ -93,6 +93,11 @@ let emitToAll = (socket, status) => {
 // so only one script can be run at once
 let locked = false;
 
+
+function isStrictNumber(value) {
+  return value.trim() !== "" && Number.isFinite(Number(value));
+}
+
 let checkerror = (command, args) => {
   let error = "";
   let realcommand = commands.get(command) || commands.get(aliases.get(command));
@@ -120,8 +125,8 @@ let checkerror = (command, args) => {
     error += `Too many arguments, `;
   } else {
     for(let i = 0; i < args.length; i++) {
-
-      if((isNaN(parseFloat(args[i])) && realcommand.config.arg_types[i].includes("number"))  || (!isNaN(parseFloat(args[i])) && realcommand.config.arg_types[i].includes("string"))) {
+      const isNumber = isStrictNumber(args[i]);
+      if((!isNumber && realcommand.config.arg_types[i].includes("number"))  || (isNumber && realcommand.config.arg_types[i].includes("string"))) {
         error += `Argument #${i+1} does not match required argument type \"${realcommand.config.arg_types[i]}\", `;
       }
     }
@@ -145,6 +150,7 @@ const commandlist = fs.readdirSync(CommandsFolder).filter(c => c.endsWith('.js')
 
 //For each of the 'files' in the command list, load them when the server starts
 for(let file of commandlist) {
+  let pull;
   try {
     pull = require(`${CommandsFolder}/${file}`);
   } catch(err) {   // needed if CommandsFolder is a local folder
@@ -209,6 +215,7 @@ io.on('connection', function (socket) {// WebSocket Connection
 
   //Handles execution of inputted commands
   socket.on('commandinput', function(data) {
+    // we should probably also enforce the 500-character limit here too
 
     //Each command is split between line breaks (one command per line)
     let inputtedcommands = data.trim().toLowerCase().split('\n');
